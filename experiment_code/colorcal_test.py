@@ -1,4 +1,4 @@
-## This script is for testing the luminance of different stimuli using the ColorCAL Colorimeter from Erin Goddard. 
+## This script is for testing the luminance of different stimuli using the ColorCAL Colorimeter. 
 ## Note to get colorcal to work on stimulus PC ##
 # 1) Plug ColorCal into USB slot.
 # 2) Check /dev folder for virtual serial port. It has shown up as ttyACM0 or ttyACM1 for me in the past. Didn't show up using certain USB extension cables
