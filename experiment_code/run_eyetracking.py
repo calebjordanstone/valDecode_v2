@@ -203,50 +203,25 @@ def external_signal_callback(external_signal_data):
     global trig
 
     # Extract the trigger value
-    # t_sys  = external_signal_data.system_time_stamp / 1000
-    # t_dev  = external_signal_data.device_time_stamp / 1000
-    # change_type = external_signal_data.change_type
     trigger = external_signal_data.value
-
-    # Save data
-    # external_signal_buffer.append((t_sys, t_dev, change_type, trigger)) 
 
     # Update global trigger variable
     trig = trigger
     print(trig)
-
-    # Reset so that trigger value appears only once
-    # trigger = '' 
-    # trig = ''
-
-# def external_signal_callback(external_signal_data):
-
-#     global trig
-#     trigger = external_signal_data.value
-#     trig = trigger
-
-#     # Save data
-#     print(trigger, trig)
-
 
 # function to save data file
 def write_buffer_to_file(gaze_data_buffer, output_path): # external_signal_buffer
 
     # Make a copy of the buffer and clear it
     gaze_data_buffer_copy = gaze_data_buffer[:]
-    # external_signal_buffer_copy = external_signal_buffer[:]
     gaze_data_buffer.clear()
-    # external_signal_buffer.clear()
     
     # Define column names for the dataframe
     gaze_data_columns = ['block', 'time_gd', 'L_X', 'L_Y', 'L_P', 'L_V', 
                          'R_X', 'R_Y', 'R_P', 'R_V', 'event'] 
-    #external_signal_columns = ['time_es_sys', 'time_es_dev', 'change_type', 'event'] 
 
     # Convert buffer to DataFrame
     gaze_data_out = pd.DataFrame(gaze_data_buffer_copy, columns=gaze_data_columns)
-    #external_signal_out = pd.DataFrame(external_signal_buffer_copy, columns=external_signal_columns)
-    #out = pd.concat([gaze_data_out, external_signal_out], axis=1)
     
     # Check if the file exists
     file_exists = os.path.isfile(output_path)
@@ -274,16 +249,6 @@ while True:
         print('Exiting')
         break
     
-    # get input to save data manually
-    # SAVE_DATA = int(input('\n\n PRESS 1 SAVE DATA. \n PRESS 0 TO EXIT. \n\n'))
-    # # write the file
-    # if SAVE_DATA:
-    #     write_buffer_to_file(gaze_data_buffer, external_signal_buffer, FILEPATH)
-    # # exit
-    # else:
-    #     write_buffer_to_file(gaze_data_buffer, external_signal_buffer, FILEPATH)
-    #     break
-
 # stop recording
 my_et.unsubscribe_from(tr.EYETRACKER_GAZE_DATA, gaze_data_callback)
 my_et.unsubscribe_from(tr.EYETRACKER_EXTERNAL_SIGNAL, external_signal_callback)
