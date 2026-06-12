@@ -99,7 +99,7 @@ if DEMOGRAPHICS:
         if not dlg.OK:
             core.quit()
 
-    AGE = int(demographics['How old are you?'])
+    AGE = int(demographics['What is your age? (Leave blank if you would rather not say)'])
     SEX = demographics['How do you describe your sex?']
 
 ## ======================================================================
@@ -865,6 +865,80 @@ cumulative_points = 0
 cumulative_cents = 0
 for block in range(1, NBLOCKS + 1): #------------------------------------------------- BLOCK ONSET
 
+    # redo calibration/validation after 11 blocks
+    if (EYETRACKING) and (block == 12):
+
+        trg_rgb = dp.DPxTriggerToRGB(255)
+        for frame in range(2): 
+            # draw stimulus
+            trig_stim.lineColor = trg_rgb
+            trig_stim.draw()
+            win.flip()
+
+        #core.wait(0.5)
+        event.clearEvents()
+        txt_stim.text = 'Redo calibration and validation'
+        while True:
+
+            # draw
+            txt_stim.draw()
+            win.flip()
+
+            # collect user input to exit 
+            begin_calibration = event.getKeys(keyList = CONKEYS)
+            if begin_calibration:
+                break
+            
+        # enter calibration
+        while True:
+
+            logging.warning('START_CALIBRATION')
+            logging.flush()
+
+            # Cycle through calibration points 
+            for point, _ in enumerate(CALIB_POINTS):
+
+                # set positions for current point
+                calib_stim.pos = CALIB_POINTS[point]
+
+                # present on screen
+                event.clearEvents()
+                calib_idx = 0 
+                while True:
+
+                    # draw stims 
+                    calib_stim.size = (crc_stim_rad/2)*calib_size[calib_idx]
+                    calib_stim.draw()
+
+                    # flip window
+                    win.flip()
+
+                    #collect user input to exit 
+                    pressed = event.getKeys(keyList = CONKEYS)
+                    if pressed:
+                        break
+
+                    # update idx
+                    calib_idx += 1
+            
+            
+            event.clearEvents()
+            txt_stim.text = 'Repeat points?'
+            while True:
+
+                # draw
+                txt_stim.draw()
+                win.flip()
+
+                # collect user input to exit 
+                continue_calibration = event.getKeys(keyList = CONKEYS)
+                end_calibration = event.getKeys(keyList = EXITKEYS)
+                if (continue_calibration) or (end_calibration):
+                    break
+
+            if end_calibration:
+                break
+
     # present instructions 
     txt_stim.text = f'This is Block {block} of 22. \n\n Please keep your eyes on the fixation cross throughout each trial. \n\n Press space to begin.' 
     
@@ -914,7 +988,7 @@ for block in range(1, NBLOCKS + 1): #-------------------------------------------
     points_this_block = 0
     cents_this_block = 0
     # start presenting trials ---------------------------------------------------------- TRIAL ONSET
-    for trial in range(0, NTRIALS):
+    for trial in range(0, 1): #NTRIALS
         
         # send trial number trigger ----------------------------------------------------TRG ONSET
         # trg_rgb = dp.DPxTriggerToRGB(trial + 1)
@@ -1150,12 +1224,14 @@ for block in range(1, NBLOCKS + 1): #-------------------------------------------
         file.write(json.dumps(framesPerBlock)) 
     # trigger save of eye tracking data
     trg_rgb = dp.DPxTriggerToRGB(254)
-    for frame in range(2): 
+    for frame in range(1): 
 
         # draw stimulus
         trig_stim.lineColor = trg_rgb
         trig_stim.draw()
         win.flip()
+    
+    core.wait(0.5)
     # present end of block text
     if block < NBLOCKS:
         txt_stim.text = f'''
@@ -1192,6 +1268,7 @@ for frame in range(2):
     trig_stim.lineColor = trg_rgb
     trig_stim.draw()
     win.flip()
+core.wait(0.5)
 
 # Run debriefing
 if DEBRIEF: 
