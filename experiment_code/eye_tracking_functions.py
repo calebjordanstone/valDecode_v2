@@ -14,11 +14,11 @@ def enter_calibration(user_input, eye_tracker):
     if user_input == 1:
 
         calibration_status = [False, False, False, False, False]
-        points_to_calibrate = [(0.25, 0.25), # upper left
-                            (0.75, 0.25), #upper right
+        points_to_calibrate = [(0.3, 0.3), # upper left
+                            (0.7, 0.3), #upper right
                             (0.5, 0.5), # middle
-                            (0.25, 0.75), # lower left
-                            (0.75, 0.75)] # lower right
+                            (0.3, 0.7), # lower left
+                            (0.7, 0.7)] # lower right
         point_names = ['Top Left', 'Top Right', 'Middle', 'Bottom Left', 'Bottom Right']
             
         calibration = tr.ScreenBasedCalibration(eye_tracker)
@@ -79,11 +79,11 @@ def enter_validation(user_input, eye_tracker):
     if user_input == 1:
 
         #validation_status = [False, False, False, False, False]
-        points_to_validate = [Point2(0.25, 0.25), # upper left
-                              Point2(0.75, 0.25), #upper right
+        points_to_validate = [Point2(0.3, 0.3), # upper left
+                              Point2(0.7, 0.3), #upper right
                               Point2(0.5, 0.5), # middle
-                              Point2(0.25, 0.75), # lower left
-                              Point2(0.75, 0.75)] # lower right
+                              Point2(0.3, 0.7), # lower left
+                              Point2(0.7, 0.7)] # lower right
         point_names = ['Top Left', 'Top Right', 'Middle', 'Bottom Left', 'Bottom Right']
         sample_count = 30
         timeout_ms = 1000

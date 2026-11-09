@@ -39,9 +39,9 @@ display_area = my_et.get_display_area()
 #z = points toward user perpendicular to the front surfice of the eye tracker
 #y = points vertically towards the user's up
 #x = points hoizontally towards the user's right
-topLeft = (-302, 433, -95)
-bottomLeft = (-302, 79, -95)
-topRight = (302, 433, -95)
+topLeft = (-315, 435, -90)
+bottomLeft = (-315, 75, -90)
+topRight = (315, 435, -90)
 new_display_area_dict = dict()
 new_display_area_dict['top_left'] = topLeft
 new_display_area_dict['top_right'] = topRight
@@ -91,20 +91,39 @@ def gaze_data_callback(gaze_data):
     global winsize # adjust for differnet coordinates - check this!!
 
     # Extract the data we are interested in
-    t  = gaze_data.system_time_stamp / 1000
+    t  = gaze_data.system_time_stamp / 1000                                                        
     lx = gaze_data.left_eye.gaze_point.position_on_display_area[0] * winsize[0]
     ly = gaze_data.left_eye.gaze_point.position_on_display_area[1] * winsize[1]
+    lx_uc = gaze_data.left_eye.gaze_point.position_in_user_coordinates[0] #check these indices are for the correct dimension
+    ly_uc = gaze_data.left_eye.gaze_point.position_in_user_coordinates[1]
+    lz_uc = gaze_data.left_eye.gaze_point.position_in_user_coordinates[2]
+    lx_go = gaze_data.left_eye.gaze_origin.position_in_user_coordinates[0]
+    ly_go = gaze_data.left_eye.gaze_origin.position_in_user_coordinates[1]
+    lz_go = gaze_data.left_eye.gaze_origin.position_in_user_coordinates[2]  
     lp = gaze_data.left_eye.pupil.diameter
     lv = gaze_data.left_eye.gaze_point.validity
     rx = gaze_data.right_eye.gaze_point.position_on_display_area[0] * winsize[0]
     ry = gaze_data.right_eye.gaze_point.position_on_display_area[1] * winsize[1]
+    rx_uc = gaze_data.right_eye.gaze_point.position_in_user_coordinates[0]
+    ry_uc = gaze_data.right_eye.gaze_point.position_in_user_coordinates[1]
+    rz_uc = gaze_data.right_eye.gaze_point.position_in_user_coordinates[2]
+    rx_go = gaze_data.right_eye.gaze_origin.position_in_user_coordinates[0]
+    ry_go = gaze_data.right_eye.gaze_origin.position_in_user_coordinates[1]
+    rz_go = gaze_data.right_eye.gaze_origin.position_in_user_coordinates[2] 
     rp = gaze_data.right_eye.pupil.diameter
     rv = gaze_data.right_eye.gaze_point.validity
     trigger = trig
     block_no = block
 
     # Save data
-    gaze_data_buffer.append((block_no, t, lx, ly, lp, lv, rx, ry, rp, rv, trigger))
+    gaze_data_buffer.append((block_no, t, 
+                             lx, ly, lp, lv, 
+                             rx, ry, rp, rv, 
+                             trigger,
+                             lx_uc, ly_uc, lz_uc,
+                             rx_uc, ry_uc, rz_uc,
+                             lx_go, ly_go, lz_go,
+                             rx_go, ry_go, rz_go))
 
     # Reset so that trigger value appears only once
     trigger = '' 
@@ -129,8 +148,14 @@ def write_buffer_to_file(gaze_data_buffer, output_path): # external_signal_buffe
     gaze_data_buffer.clear()
     
     # Define column names for the dataframe
-    gaze_data_columns = ['block', 'time_gd', 'L_X', 'L_Y', 'L_P', 'L_V', 
-                         'R_X', 'R_Y', 'R_P', 'R_V', 'event'] 
+    gaze_data_columns = ['block', 'time_gd', 
+                         'L_X', 'L_Y', 'L_P', 'L_V', 
+                         'R_X', 'R_Y', 'R_P', 'R_V', 
+                         'event', 
+                         'LX_UC', 'LY_UC', 'LZ_UC', 
+                         'RX_UC', 'RY_UC', 'RZ_UC',
+                         'LX_GO', 'LY_GO', 'LZ_GO',
+                         'RX_GO', 'RY_GO', 'RZ_GO'] 
 
     # Convert buffer to DataFrame
     gaze_data_out = pd.DataFrame(gaze_data_buffer_copy, columns=gaze_data_columns)
